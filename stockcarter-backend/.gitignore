@@ -1,0 +1,20 @@
+# Python virtual environment
+env/
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Distribution / packaging
+*.egg-info/
+build/
+dist/
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store  # For macOS
+
+# Environment variables
+.env
