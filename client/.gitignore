@@ -25,3 +25,5 @@ dist-ssr
 
 # For environment variables
 .env
+
+TODO_LIST.md
