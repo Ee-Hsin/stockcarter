@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { useCreateUser } from '../../hooks/query'
 import { FailureModal } from '../UI/FailureModal'
 import { Loader } from '../UI/Loader'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 interface SignUpFormData {
@@ -28,9 +28,6 @@ export const SignUp = () => {
     reset()
   }
 
-  //Navigates to portfolio page after user signs up
-  if (mutation.isSuccess) return <Navigate to="/dashboard" />
-
   // Protects form for when User is alr signed in
   if (user) {
     return (
@@ -52,7 +49,7 @@ export const SignUp = () => {
           subMessage={mutation.error.message}
         />
       )}
-      {mutation.isSuccess && <Navigate to="/portfolio" />}
+      {mutation.isSuccess && <Navigate to="/dashboard" />}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
           Register
@@ -106,7 +103,13 @@ export const SignUp = () => {
                     required: 'Password is required',
                     minLength: {
                       value: 6,
-                      message: 'Password must be at lest 6 characters',
+                      message: 'Password must be at least 6 characters',
+                    },
+                    pattern: {
+                      value:
+                        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
+                      message:
+                        'Password must include uppercase, lowercase, and numbers',
                     },
                   })}
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -128,6 +131,15 @@ export const SignUp = () => {
             </div>
           </form>
         )}
+        <p className="mt-10 text-center text-sm text-gray-300">
+          Already have an account?{' '}
+          <Link
+            to="/signin"
+            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          >
+            Login Here!
+          </Link>{' '}
+        </p>
       </div>
     </div>
   )

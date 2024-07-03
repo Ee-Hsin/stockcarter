@@ -17,18 +17,16 @@ export const SignIn: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    // reset,
   } = useForm<SignInFormData>()
 
   const onSubmit: SubmitHandler<SignInFormData> = (data) => {
     //Ensure user can't sign in when already signed in
     if (user) return
     mutation.mutate(data)
-    reset()
+    // reset() Don't rly need to reset the form here as if successful, it redirects them, and if not,
+    // we want to leave the user with their previous response to allow them to fix it
   }
-
-  //Navigates to portfolio page when user is signed in
-  if (mutation.isSuccess) return <Navigate to="/dashboard" />
 
   // Protects form for when User is alr signed in
   if (user) {
@@ -51,6 +49,7 @@ export const SignIn: React.FC = () => {
         </h2>
       </div>
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {mutation.isSuccess && <Navigate to="/dashboard" />}
         {mutation.isPending ? (
           <Loader />
         ) : (
@@ -94,10 +93,6 @@ export const SignIn: React.FC = () => {
                   autoComplete="current-password"
                   {...register('password', {
                     required: 'Password is required',
-                    minLength: {
-                      value: 6,
-                      message: 'Password is at least 6 characters long',
-                    },
                   })}
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
                 />
