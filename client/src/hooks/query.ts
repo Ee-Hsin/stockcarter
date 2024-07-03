@@ -33,3 +33,17 @@ export const useCreateUser = () => {
     },
   })
 }
+
+export const useResetPassword = () => {
+  const { resetPassword } = useAuth()
+
+  return useMutation<void, Error, string>({
+    mutationFn: (email: string) => resetPassword(email),
+    onError: (error: Error) => {
+      console.error('Reset password failed:', error)
+    },
+    onSuccess: () => {
+      console.log('Reset password successful')
+    },
+  })
+}

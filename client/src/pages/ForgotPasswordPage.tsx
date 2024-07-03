@@ -1,7 +1,12 @@
 import React from 'react'
+import { ForgotPassword } from '../components/Authentication/ForgotPassword'
 
 const ForgotPasswordPage: React.FC = () => {
-  return <div>{/* Your component content goes here */}</div>
+  return (
+    <div className="h-screen w-screen">
+      <ForgotPassword />
+    </div>
+  )
 }
 
 export default ForgotPasswordPage
