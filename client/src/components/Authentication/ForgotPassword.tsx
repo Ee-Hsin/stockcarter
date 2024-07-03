@@ -7,6 +7,7 @@ import { useResetPassword } from '../../hooks/query'
 import { FailureModal } from '../UI/FailureModal'
 import { SuccessModal } from '../UI/SuccessModal'
 import { Loader } from '../UI/Loader'
+import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
 
 export const ForgotPassword: React.FC = () => {
   const emailRef = useRef<HTMLInputElement>(null)
@@ -25,15 +26,7 @@ export const ForgotPassword: React.FC = () => {
 
   // Protects form for when User is alr signed in
   if (user) {
-    return (
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            You are already Logged in!
-          </h2>
-        </div>
-      </div>
-    )
+    return <AlreadyLoggedIn />
   }
 
   return (

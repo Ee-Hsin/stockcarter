@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { Loader } from '../UI/Loader'
 import { useSignIn } from '../../hooks/query'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
 
 interface SignInFormData {
   email: string
@@ -28,17 +29,14 @@ export const SignIn: React.FC = () => {
     // we want to leave the user with their previous response to allow them to fix it
   }
 
+  //Navigate after successful login
+  if (mutation.isSuccess) {
+    return <Navigate to="/dashboard" />
+  }
+
   // Protects form for when User is alr signed in
   if (user) {
-    return (
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-            You are already Logged in!
-          </h2>
-        </div>
-      </div>
-    )
+    return <AlreadyLoggedIn />
   }
 
   return (
@@ -49,7 +47,6 @@ export const SignIn: React.FC = () => {
         </h2>
       </div>
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        {mutation.isSuccess && <Navigate to="/dashboard" />}
         {mutation.isPending ? (
           <Loader />
         ) : (

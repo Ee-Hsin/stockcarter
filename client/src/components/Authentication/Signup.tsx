@@ -4,6 +4,7 @@ import { FailureModal } from '../UI/FailureModal'
 import { Loader } from '../UI/Loader'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
 
 interface SignUpFormData {
   email: string
@@ -28,17 +29,14 @@ export const SignUp = () => {
     reset()
   }
 
+  //Navigate after successful sign up
+  if (mutation.isSuccess) {
+    return <Navigate to="/dashboard" />
+  }
+
   // Protects form for when User is alr signed in
   if (user) {
-    return (
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-            You are already Logged in!
-          </h2>
-        </div>
-      </div>
-    )
+    return <AlreadyLoggedIn />
   }
 
   return (
@@ -49,7 +47,6 @@ export const SignUp = () => {
           subMessage={mutation.error.message}
         />
       )}
-      {mutation.isSuccess && <Navigate to="/dashboard" />}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
           Register
