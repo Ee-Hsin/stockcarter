@@ -8,6 +8,8 @@ import DashboardPage from './pages/DashboardPage'
 import TransactionsPage from './pages/TransactionsPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useAuth } from './hooks/useAuth'
+import { FailureModal } from './components/UI/FailureModal'
 
 function App() {
   const queryClient = new QueryClient()
@@ -21,13 +23,46 @@ function App() {
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedAuthRoute>
+                  <DashboardPage />
+                </ProtectedAuthRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedAuthRoute>
+                  <TransactionsPage />
+                </ProtectedAuthRoute>
+              }
+            />
           </Routes>
         </div>
       </Router>
     </QueryClientProvider>
   )
+}
+
+interface ProtectedAuthRouteProps {
+  children: React.ReactNode
+}
+const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
+  children,
+}) => {
+  const { user } = useAuth()
+
+  if (!user) {
+    return (
+      <FailureModal
+        subMessage={'You must sign in to gain access to this page'}
+      />
+    )
+  } else {
+    return <>{children}</>
+  }
 }
 
 export default App

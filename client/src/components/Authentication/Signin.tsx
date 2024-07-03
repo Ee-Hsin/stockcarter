@@ -51,7 +51,7 @@ export const SignIn: React.FC = () => {
             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
             alt="Your Company"
           /> */}
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-indigo-600">
+        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
           Sign In
         </h2>
       </div>
@@ -63,7 +63,7 @@ export const SignIn: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-gray-300"
+                className="block text-sm font-medium leading-6 text-indigo-400"
               >
                 Email address
               </label>
@@ -87,7 +87,7 @@ export const SignIn: React.FC = () => {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-300"
+                  className="block text-sm font-medium leading-6 text-indigo-400"
                 >
                   Password
                 </label>
