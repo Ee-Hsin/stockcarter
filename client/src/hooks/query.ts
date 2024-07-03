@@ -17,3 +17,19 @@ export const useSignIn = () => {
     },
   })
 }
+
+export const useCreateUser = () => {
+  const { createUser } = useAuth()
+
+  return useMutation<UserCredential, Error, SignInCredentials>({
+    mutationFn: ({ email, password }: SignInCredentials) =>
+      createUser(email, password),
+    onError: (error: Error) => {
+      console.error('Create user failed:', error)
+    },
+    onSuccess: (userCredential: UserCredential) => {
+      //TODO: Set up endpoint to hit here with the userCredential object to create a new user Document in the database
+      console.log('Create user successful:', userCredential)
+    },
+  })
+}
