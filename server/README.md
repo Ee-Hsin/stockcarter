@@ -34,4 +34,7 @@ When you're finished working, you can deactivate the virtual environment by runn
 To start the server, ensure that the virtual environment is activated, and run the provided shell script:
 ```./start.sh```
 
+If you get an error like: importlib.metadata.PackageNotFoundError , you probably just need to rebuild and reinstall your package:
+```pip install -e .```
+
 This script checks for virtual environment activation and starts the FastAPI server using Uvicorn. If the virtual environment is not active, it will remind you to activate it.
