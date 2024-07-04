@@ -29,9 +29,10 @@ export const useCreateUser = () => {
       console.error('Create user failed:', error)
     },
     onSuccess: async (userCredential: UserCredential) => {
+      console.log('Create user successful:', userCredential)
       await API.post('/users', {
         email: userCredential.user.email,
-        _id: userCredential.user.uid,
+        id: userCredential.user.uid,
         isAdmin: false,
       })
       console.log('Create user successful:', userCredential)
