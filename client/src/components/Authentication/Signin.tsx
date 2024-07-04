@@ -1,7 +1,7 @@
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { Loader } from '../UI/Loader'
-import { useSignIn, useGoogleSignIn } from '../../hooks/query'
+import { useSignIn, useGoogleSignIn } from '../../hooks/queries/authQuery'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
 import './googleButton.css'

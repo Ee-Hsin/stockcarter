@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useCreateUser, useGoogleSignIn } from '../../hooks/query'
+import { useCreateUser, useGoogleSignIn } from '../../hooks/queries/authQuery'
 import { FailureModal } from '../UI/FailureModal'
 import { Loader } from '../UI/Loader'
 import { Link, Navigate } from 'react-router-dom'

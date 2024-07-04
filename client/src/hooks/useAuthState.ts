@@ -1,6 +1,6 @@
 import { User, onAuthStateChanged } from 'firebase/auth'
 import { useEffect, useState } from 'react'
-import { useGetUserDetails } from './query'
+import { useGetUserDetails } from './queries/userQuery'
 import { auth } from '../firebase'
 
 export const useAuthState = () => {
