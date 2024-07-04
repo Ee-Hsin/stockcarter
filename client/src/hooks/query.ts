@@ -1,5 +1,5 @@
 import { UserCredential } from 'firebase/auth'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { SignInCredentials } from '../types/authenticationTypes'
 import { UserDetails } from '../types/userTypes'
 import { useAuth } from '../hooks/useAuth'
@@ -20,6 +20,33 @@ export const useSignIn = () => {
   })
 }
 
+export const useGoogleSignIn = () => {
+  const { signInWithGoogle } = useAuth()
+
+  return useMutation<UserCredential, Error, void>({
+    mutationFn: () => signInWithGoogle(),
+    onError: (error: Error) => {
+      console.error('Login failed:', error)
+    },
+    onSuccess: async (userCredential: UserCredential) => {
+      console.log('Google Login successful:', userCredential)
+      //Now update the backend with the user's details (will create a new doc if not already present since signin with google works
+      //for both first time sign up and sign in)
+      try {
+        const response = await API.post('/users', {
+          email: userCredential.user.email,
+          id: userCredential.user.uid,
+          name: userCredential.user.displayName,
+          isAdmin: false,
+        })
+        console.log('User updated/created successfully:', response.data)
+      } catch (error) {
+        console.error('Failed to create/update user:', error)
+      }
+    },
+  })
+}
+
 export const useCreateUser = () => {
   const { createUser } = useAuth()
 
@@ -31,12 +58,16 @@ export const useCreateUser = () => {
     },
     onSuccess: async (userCredential: UserCredential) => {
       console.log('Create user successful:', userCredential)
-      await API.post('/users', {
-        email: userCredential.user.email,
-        id: userCredential.user.uid,
-        isAdmin: false,
-      })
-      console.log('Create user successful:', userCredential)
+      try {
+        const response = await API.post('/users', {
+          email: userCredential.user.email,
+          id: userCredential.user.uid,
+          isAdmin: false,
+        })
+        console.log('User created successfully:', response.data)
+      } catch (error) {
+        console.error('Failed to create/update user:', error)
+      }
     },
   })
 }

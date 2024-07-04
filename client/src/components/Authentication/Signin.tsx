@@ -1,7 +1,7 @@
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { Loader } from '../UI/Loader'
-import { useSignIn } from '../../hooks/query'
+import { useSignIn, useGoogleSignIn } from '../../hooks/query'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
 
@@ -13,6 +13,7 @@ interface SignInFormData {
 export const SignIn: React.FC = () => {
   const { user } = useAuth()
   const mutation = useSignIn()
+  const googleMutation = useGoogleSignIn()
 
   const {
     register,
@@ -123,7 +124,13 @@ export const SignIn: React.FC = () => {
             </div>
           </form>
         )}
-
+        <button
+          onClick={() => googleMutation.mutate()}
+          className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible
+        :outline-red-600"
+        >
+          Sign In with Google
+        </button>
         <p className="mt-10 text-center text-sm text-gray-300">
           Not a Registered User?{' '}
           <Link

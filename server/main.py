@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.middleware.base import BaseHTTPMiddleware
+from pymongo.collection import ReturnDocument
 from models import User # Import the models from models.py
 from datetime import datetime, timezone
 import uvicorn
@@ -54,22 +55,33 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": exc.errors(), "body": exc.body},
     )
 
-#TO create a user in MongoDB
+#To create or update a user in MongoDB
 @app.post("/users", response_model=User, status_code=status.HTTP_201_CREATED)
-async def create_user(user: User, db=Depends(get_database)):
+async def create_or_update_user(user: User, db=Depends(get_database)):
     print(f"Received user data: {user.json()}")
     users_collection = db.users
-    # Check if the user already exists
-    if await users_collection.find_one({"_id": user.id}):
-        raise HTTPException(status_code=400, detail="User already exists")
-    
-    # Prepare user data with current timestamps
-    user_data = user.dict(by_alias=True)
-    user_data['createdAt'] = user_data['updatedAt'] = datetime.now(timezone.utc)
+    existing_user = await users_collection.find_one({"_id": user.id})
+    if existing_user:
+        update_data = {}
+        if user.name:
+            update_data["name"] = user.name #Name could change from the google account, so we want to update our user doc too!
+        else:
+            update_data["name"] = existing_user.get("name", None) #If no name is provided, keep the existing name
 
-    # Insert the user into the database
-    await users_collection.insert_one(user_data)
-    return user
+        updated_user = await users_collection.find_one_and_update(
+            {"_id": user.id},
+            {"$set": update_data},
+            return_document=ReturnDocument.AFTER
+        )
+        return updated_user
+    else:
+        # Prepare user data with current timestamps
+        user_data = user.dict(by_alias=True)
+        user_data['createdAt'] = user_data['updatedAt'] = datetime.now(timezone.utc)
+
+        # Insert the user into the database
+        await users_collection.insert_one(user_data)
+        return user
 
 #To get a user from MongoDB
 @app.get("/users/{user_id}", response_model=User, status_code=status.HTTP_200_OK)

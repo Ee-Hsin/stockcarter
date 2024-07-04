@@ -2,6 +2,8 @@ import { createContext, ReactNode } from 'react'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
   signOut,
   sendPasswordResetEmail,
   User,
@@ -16,6 +18,7 @@ export interface AuthContextType {
   userDetails: UserDetails | null
   createUser: (email: string, password: string) => Promise<UserCredential>
   signIn: (email: string, password: string) => Promise<UserCredential>
+  signInWithGoogle: () => Promise<UserCredential>
   resetPassword: (email: string) => Promise<void>
   logOut: () => Promise<void>
 }
@@ -41,6 +44,11 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     return signInWithEmailAndPassword(auth, email, password)
   }
 
+  const signInWithGoogle = () => {
+    const provider = new GoogleAuthProvider()
+    return signInWithPopup(auth, provider)
+  }
+
   const resetPassword = (email: string) => {
     return sendPasswordResetEmail(auth, email)
   }
@@ -51,7 +59,15 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
   return (
     <UserContext.Provider
-      value={{ createUser, signIn, resetPassword, user, userDetails, logOut }}
+      value={{
+        createUser,
+        signIn,
+        signInWithGoogle,
+        resetPassword,
+        user,
+        userDetails,
+        logOut,
+      }}
     >
       {children}
     </UserContext.Provider>
