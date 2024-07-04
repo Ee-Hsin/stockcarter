@@ -1,6 +1,7 @@
 import { UserCredential } from 'firebase/auth'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SignInCredentials } from '../types/authenticationTypes'
+import { UserDetails } from '../types/userTypes'
 import { useAuth } from '../hooks/useAuth'
 import API from '../services/api'
 
@@ -51,5 +52,16 @@ export const useResetPassword = () => {
     onSuccess: () => {
       console.log('Reset password successful')
     },
+  })
+}
+
+export const useGetUserDetails = (userId: string) => {
+  return useQuery<UserDetails, Error>({
+    queryKey: ['userDetails', userId],
+    queryFn: async () => {
+      const { data } = await API.get(`/users/${userId}`)
+      return data
+    },
+    enabled: !!userId,
   })
 }

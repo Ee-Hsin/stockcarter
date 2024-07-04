@@ -1,20 +1,15 @@
-import { createContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, ReactNode } from 'react'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
   signOut,
   sendPasswordResetEmail,
   User,
   UserCredential,
 } from 'firebase/auth'
 import { auth } from '../firebase'
-
-interface UserDetails {
-  uid: string
-  email: string
-  name?: string
-}
+import { UserDetails } from '../types/userTypes'
+import { useAuthState } from './useAuthState'
 
 export interface AuthContextType {
   user: User | null
@@ -33,34 +28,10 @@ interface AuthContextProviderProps {
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null)
+  const { user, userDetails } = useAuthState()
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currUser) => {
-      if (currUser) {
-        setUser(currUser)
-        // fetchUserDetails(currUser.uid); // Call your backend to fetch user details
-      } else {
-        setUser(null)
-        setUserDetails(null)
-      }
-    })
-
-    return () => unsubscribe()
-  }, [])
-
-  // TODO: Set up endppoint in backend for this (might have to make it a websocket if we are actively listening
-  //for changes in the user document in the database)
-  // const fetchUserDetails = async (uid: string) => {
-  //     try {
-  //       const response = await fetch(https://yourapi.com/users/${uid});
-  //       const data = await response.json();
-  //       setUserDetails(data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch user details", error);
-  //     }
-  //   };
+  console.log('user', user)
+  console.log('userDetails', userDetails)
 
   const createUser = (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password)

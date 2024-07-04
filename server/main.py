@@ -71,5 +71,14 @@ async def create_user(user: User, db=Depends(get_database)):
     await users_collection.insert_one(user_data)
     return user
 
+#To get a user from MongoDB
+@app.get("/users/{user_id}", response_model=User, status_code=status.HTTP_200_OK)
+async def read_user(user_id: str, db=Depends(get_database)):
+    users_collection = db.users
+    user_data = await users_collection.find_one({"_id": user_id})
+    if user_data:
+        return User(**user_data)
+    raise HTTPException(status_code=404, detail="User not found")
+
 def start():
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
