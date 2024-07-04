@@ -4,6 +4,8 @@ import { Loader } from '../UI/Loader'
 import { useSignIn, useGoogleSignIn } from '../../hooks/query'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
+import './googleButton.css'
+import GoogleSignInButton from './GoogleSignInButton'
 
 interface SignInFormData {
   email: string
@@ -28,6 +30,12 @@ export const SignIn: React.FC = () => {
     mutation.mutate(data)
     // reset() Don't rly need to reset the form here as if successful, it redirects them, and if not,
     // we want to leave the user with their previous response to allow them to fix it
+  }
+
+  const handleGoogleSignIn = () => {
+    //Ensure user can't sign in when already signed in
+    if (user) return
+    googleMutation.mutate()
   }
 
   //Navigate after successful login
@@ -124,14 +132,10 @@ export const SignIn: React.FC = () => {
             </div>
           </form>
         )}
-        <button
-          onClick={() => googleMutation.mutate()}
-          className="flex w-full justify-center rounded-md bg-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible
-        :outline-red-600"
-        >
-          Sign In with Google
-        </button>
-        <p className="mt-10 text-center text-sm text-gray-300">
+        <div className="mt-5 flex justify-center">
+          <GoogleSignInButton onClick={handleGoogleSignIn}></GoogleSignInButton>
+        </div>
+        <p className="mt-5 text-center text-sm text-gray-300">
           Not a Registered User?{' '}
           <Link
             to="/signup"

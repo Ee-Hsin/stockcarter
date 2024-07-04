@@ -1,10 +1,11 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useCreateUser } from '../../hooks/query'
+import { useCreateUser, useGoogleSignIn } from '../../hooks/query'
 import { FailureModal } from '../UI/FailureModal'
 import { Loader } from '../UI/Loader'
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
+import GoogleSignInButton from './GoogleSignInButton'
 
 interface SignUpFormData {
   email: string
@@ -13,6 +14,7 @@ interface SignUpFormData {
 
 export const SignUp = () => {
   const mutation = useCreateUser()
+  const googleMutation = useGoogleSignIn()
   const { user } = useAuth()
 
   const {
@@ -27,6 +29,11 @@ export const SignUp = () => {
     if (user) return
     mutation.mutate(data)
     reset()
+  }
+
+  const handleGoogleSignUp = () => {
+    if (user) return
+    googleMutation.mutate()
   }
 
   //Navigate after successful sign up
@@ -128,6 +135,9 @@ export const SignUp = () => {
             </div>
           </form>
         )}
+        <div className="mt-5 flex justify-center">
+          <GoogleSignInButton onClick={handleGoogleSignUp}></GoogleSignInButton>
+        </div>
         <p className="mt-10 text-center text-sm text-gray-300">
           Already have an account?{' '}
           <Link
