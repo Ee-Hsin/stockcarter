@@ -37,8 +37,8 @@ export const SignUp = () => {
   }
 
   //Navigate after successful sign up
-  if (mutation.isSuccess) {
-    return <Navigate to="/dashboard" />
+  if (mutation.isSuccess || googleMutation.isSuccess) {
+    return <Navigate to="/onboarding" />
   }
 
   // Protects form for when User is alr signed in

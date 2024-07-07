@@ -61,6 +61,7 @@ async def create_or_update_user(user: User, db=Depends(get_database)):
     print(f"Received user data: {user.json()}")
     users_collection = db.users
     existing_user = await users_collection.find_one({"_id": user.id})
+    # If the user already exists, update the user
     if existing_user:
         update_data = {}
         if user.name:
@@ -74,6 +75,7 @@ async def create_or_update_user(user: User, db=Depends(get_database)):
             return_document=ReturnDocument.AFTER
         )
         return updated_user
+    # If the user does not exist, create a new user
     else:
         # Prepare user data with current timestamps
         user_data = user.dict(by_alias=True)

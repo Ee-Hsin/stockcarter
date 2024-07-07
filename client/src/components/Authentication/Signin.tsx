@@ -4,7 +4,7 @@ import { Loader } from '../UI/Loader'
 import { useSignIn, useGoogleSignIn } from '../../hooks/queries/authQuery'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { AlreadyLoggedIn } from '../UI/AlreadyLoggedIn'
-import './googleButton.css'
+import './GoogleSignInButton.css'
 import GoogleSignInButton from './GoogleSignInButton'
 
 interface SignInFormData {
@@ -39,7 +39,7 @@ export const SignIn: React.FC = () => {
   }
 
   //Navigate after successful login
-  if (mutation.isSuccess) {
+  if (mutation.isSuccess || googleMutation.isSuccess) {
     return <Navigate to="/dashboard" />
   }
 

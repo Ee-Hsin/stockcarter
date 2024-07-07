@@ -8,9 +8,11 @@ import DashboardPage from './pages/DashboardPage'
 import TransactionsPage from './pages/TransactionsPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useAuth } from './hooks/useAuth'
-import { FailureModal } from './components/UI/FailureModal'
+import { ProtectedAuthRoute } from './routes/ProtectedAuthRoute'
+import { OnboardingRoute } from './routes/OnboardingRoute'
+import { PublicRoute } from './routes/PublicRoute'
 import { AuthContextProvider } from './hooks/AuthContext'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 function App() {
   const queryClient = new QueryClient()
@@ -22,9 +24,31 @@ function App() {
           <div className="bg-black bg-opacity-99 w-screen h-screen">
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/signin" element={<SignInPage />} />
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
+              <Route
+                path="/signin"
+                element={
+                  <PublicRoute>
+                    <SignInPage />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicRoute>
+                    <SignUpPage />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/forgotpassword"
+                element={
+                  <PublicRoute>
+                    <ForgotPasswordPage />
+                  </PublicRoute>
+                }
+              />
+              <Route path="onboarding" element={<OnboardingRoute />} />
               <Route
                 path="/dashboard"
                 element={
@@ -41,31 +65,14 @@ function App() {
                   </ProtectedAuthRoute>
                 }
               />
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFoundPage />} />{' '}
             </Routes>
           </div>
         </Router>
       </AuthContextProvider>
     </QueryClientProvider>
   )
-}
-
-interface ProtectedAuthRouteProps {
-  children: React.ReactNode
-}
-const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
-  children,
-}) => {
-  const { user } = useAuth()
-
-  if (!user) {
-    return (
-      <FailureModal
-        subMessage={'You must sign in to gain access to this page'}
-      />
-    )
-  } else {
-    return <>{children}</>
-  }
 }
 
 export default App

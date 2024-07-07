@@ -86,7 +86,7 @@ export const ForgotPassword: React.FC = () => {
             </div>
           </form>
         )}
-        <p className="mt-10 text-center text-sm text-gray-800">
+        <p className="mt-10 text-center text-sm text-gray-400">
           Not a registered user?{' '}
           <Link
             to="/signup"
