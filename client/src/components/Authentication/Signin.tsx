@@ -38,6 +38,8 @@ export const SignIn: React.FC = () => {
     googleMutation.mutate()
   }
 
+  //NOTE: These two are not needed as we protect the route in the route file
+
   //Navigate after successful login
   if (mutation.isSuccess || googleMutation.isSuccess) {
     return <Navigate to="/dashboard" />

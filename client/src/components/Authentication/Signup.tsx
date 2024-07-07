@@ -36,6 +36,8 @@ export const SignUp = () => {
     googleMutation.mutate()
   }
 
+  //NOTE: These two are not needed as we protect the route in the route file
+
   //Navigate after successful sign up
   if (mutation.isSuccess || googleMutation.isSuccess) {
     return <Navigate to="/onboarding" />
