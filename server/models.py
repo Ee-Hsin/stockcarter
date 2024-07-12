@@ -46,3 +46,20 @@ class User(BaseModel):
         if len(value) > 2:
             raise ValueError("You can select up to 2 investor types.")
         return value
+    
+class UserUpdateModel(BaseModel):
+    isOnboarded: Optional[bool] = None
+    isAdmin: Optional[bool] = None
+    email: Optional[str] = None
+    name: Optional[str] = None
+    age: Optional[int] = None
+    experienceLevel: Optional[ExperienceLevel] = None
+    investmentTimeframe: Optional[InvestmentTimeframe] = None
+    investorType: Optional[List[InvestorType]] = None
+
+    # Limits number of investor types to 2
+    @validator('investorType', always=True)
+    def limit_investor_types(cls, value):
+        if value is not None and len(value) > 2:
+            raise ValueError("You can select up to 2 investor types.")
+        return value

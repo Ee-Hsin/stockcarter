@@ -1,9 +1,5 @@
 
 TO do list:
-1. Restrcuture Project
- - Change start script for starting app if needed
-- Change location of .env file if needed
- - Requirements.txt file
- - Change gitignore 
-2. Set up endpoints for creating and signing in users, as well as to accomodate google logins
-3. Refactor app to multiple files
+1. Add middleware to always check for refresh token
+2. Make it so that refresh token is what is used to track the user id as opposed to the user object, change the two existing ones
+3. Make onboarding path with the refresh token!

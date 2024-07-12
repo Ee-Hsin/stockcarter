@@ -13,8 +13,8 @@ export const useSignIn = () => {
     onError: (error: Error) => {
       console.error('Login failed:', error)
     },
-    onSuccess: (userCredential: UserCredential) => {
-      console.log('Login successful:', userCredential)
+    onSuccess: () => {
+      console.log('Login successful')
     },
   })
 }
@@ -28,19 +28,46 @@ export const useGoogleSignIn = () => {
       console.error('Login failed:', error)
     },
     onSuccess: async (userCredential: UserCredential) => {
-      console.log('Google Login successful:', userCredential)
+      console.log('Google Login successful')
       //Now update the backend with the user's details (will create a new doc if not already present since signin with google works
       //for both first time sign up and sign in)
+
+      //NOTE: Fetch the token right after user signs in, and provide it in the Authorization header just in case axios interceptor
+      //does not detect user and add token in time
+      const token = await userCredential.user.getIdToken()
       try {
-        const response = await API.post('/users', {
-          email: userCredential.user.email,
-          id: userCredential.user.uid,
-          name: userCredential.user.displayName,
-          isAdmin: false,
-        })
-        console.log('User updated/created successfully:', response.data)
+        const response = await API.post(
+          '/users',
+          {
+            email: userCredential.user.email,
+            name: userCredential.user.displayName,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        console.log('User created successfully:', response.data)
       } catch (error) {
-        console.error('Failed to create/update user:', error)
+        console.log('User already exists, updating instead')
+        try {
+          await API.put(
+            '/users',
+            {
+              email: userCredential.user.email,
+              name: userCredential.user.displayName,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          )
+          console.log('User updated successfully')
+        } catch (updateError) {
+          console.error('Failed to update user:', updateError)
+        }
       }
     },
   })
@@ -56,14 +83,15 @@ export const useCreateUser = () => {
       console.error('Create user failed:', error)
     },
     onSuccess: async (userCredential: UserCredential) => {
-      console.log('Create user successful:', userCredential)
+      console.log('Create Firebase user successful')
+      //NOTE: Fetch the token right after user is created, and provide it in the Authorization header just in case axios interceptor
+      //does not detect user and add token in time
+      // const token = await userCredential.user.getIdToken()
       try {
-        const response = await API.post('/users', {
+        await API.post('/users', {
           email: userCredential.user.email,
-          id: userCredential.user.uid,
-          isAdmin: false,
         })
-        console.log('User created successfully:', response.data)
+        console.log('User created in backend successfully')
       } catch (error) {
         console.error('Failed to create/update user:', error)
       }

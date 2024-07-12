@@ -21,3 +21,12 @@ export enum InvestorType {
   NoStrategyInvestor = 'No Strategy Investor',
   Other = 'Other',
 }
+
+export interface OnboardingData {
+  name: string
+  age: number
+  experienceLevel: ExperienceLevel
+  investmentTimeframe: InvestmentTimeframe
+  investorType: InvestorType[]
+  isOnboarded: boolean
+}

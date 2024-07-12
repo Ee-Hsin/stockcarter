@@ -6,14 +6,9 @@ import {
   ExperienceLevel,
   InvestmentTimeframe,
   InvestorType,
+  OnboardingData,
 } from '../types/onboardingTypes'
-
-interface OnboardingFormData {
-  age: number
-  experienceLevel: ExperienceLevel
-  investmentTimeframe: InvestmentTimeframe
-  investorType: InvestorType[]
-}
+import { usePostOnboardingDetails } from '../hooks/queries/userQuery'
 
 const Onboarding: React.FC = () => {
   const {
@@ -24,11 +19,11 @@ const Onboarding: React.FC = () => {
     watch,
     setError,
     clearErrors,
-  } = useForm<OnboardingFormData>()
+  } = useForm<OnboardingData>()
 
-  const mutation = usePostUserDetails()
+  const mutation = usePostOnboardingDetails()
 
-  const onSubmit: SubmitHandler<OnboardingFormData> = (data) => {
+  const onSubmit: SubmitHandler<OnboardingData> = (data) => {
     mutation.mutate(data)
   }
 
@@ -63,13 +58,32 @@ const Onboarding: React.FC = () => {
         />
       )}
 
-      {mutation.isLoading ? (
+      {mutation.isPending ? (
         <Loader />
       ) : (
         <form
           className="space-y-6 w-full max-w-md"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              {...register('name', { required: 'Name is required' })}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-xs italic">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+
           <div>
             <label
               htmlFor="age"

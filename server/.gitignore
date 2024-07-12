@@ -18,3 +18,5 @@ dist/
 
 # Environment variables
 .env
+
+stockcarter-firebase-adminsdk.json
