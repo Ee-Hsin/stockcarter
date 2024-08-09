@@ -84,9 +84,6 @@ export const useCreateUser = () => {
     },
     onSuccess: async (userCredential: UserCredential) => {
       console.log('Create Firebase user successful')
-      //NOTE: Fetch the token right after user is created, and provide it in the Authorization header just in case axios interceptor
-      //does not detect user and add token in time
-      // const token = await userCredential.user.getIdToken()
       try {
         await API.post('/users', {
           email: userCredential.user.email,

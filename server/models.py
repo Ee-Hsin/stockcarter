@@ -26,7 +26,7 @@ class InvestorType(Enum):
     other = "Other"
 
 class User(BaseModel):
-    id: str = Field(..., alias='_id')  # Using an alias
+    id: Optional[str] = Field(default=None, alias='_id')  # Make id optional so it passes model validation and using Alies
     email: str
     name: Optional[str] = None
     isAdmin: bool = Field(default=False)

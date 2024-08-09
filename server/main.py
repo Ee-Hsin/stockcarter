@@ -21,9 +21,10 @@ app.add_middleware(
     # List of origins that are allowed to make requests.
     allow_origins=["http://localhost:5173"],
     # For production, this should be set to the frontend URL
-    allow_credentials=True, 
+    allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
-    allow_headers=["Authorization", "Content-Type", "Access-Control-Allow-Headers", "Origin", "Accept", "X-Requested-With"],  # Explicitly allow headers
+    allow_headers=["Authorization", "Content-Type", "Access-Control-Allow-Headers",
+                   "Origin", "Accept", "X-Requested-With"],  # Explicitly allow headers
 )
 
 # Initialize Firebase Admin SDK (with credentials), this file should be .gitignored
@@ -32,7 +33,7 @@ firebase_admin.initialize_app(cred)
 
 # Ensures that the token is valid and decodes it, puts the token in the request state
 # In every function, id can be retrieved from request.state.user['uid'], and other claims can be retrieved in a similar way
-# We should only veer use the id in the backend that we get from the token, and not the id that is sent from the frontend
+# We should only ever use the id in the backend that we get from the token, and not the id that is sent from the frontend
 # this is because the id from the frontend can be tampered with, but the id from the token is secure
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
@@ -54,6 +55,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         response = await call_next(request)
         return response
+
 
 # Adding the AuthMiddleware to the FastAPI app
 app.add_middleware(AuthMiddleware)
@@ -97,8 +99,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 # To get a user from MongoDB
-
-
 @app.get("/users", response_model=User, status_code=status.HTTP_200_OK)
 async def read_user(request: Request, db=Depends(get_database)):
     users_collection = db.users
@@ -113,16 +113,27 @@ async def read_user(request: Request, db=Depends(get_database)):
 async def create_user(request: Request, user: User, db=Depends(get_database)):
     users_collection = db.users
     user_id = request.state.user['uid']
+    if not user_id:
+        raise HTTPException(
+            status_code=422, detail="User ID is missing in the token")
+
     existing_user = await users_collection.find_one({"_id": user_id})
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
 
-    user_data = user.dict()
-    user_data['_id'] = user_id  # Set user ID from token
+    user_data = user.dict(exclude={'id'})
+    user_data['_id'] = user_id  # Set user ID from token as it is untampered
     user_data['createdAt'] = user_data['updatedAt'] = datetime.now(
         timezone.utc)
-    await users_collection.insert_one(user_data)
-    return user_data  # Return the created user data, wrapped in your User model
+    try:
+        result = await users_collection.insert_one(user_data)
+        if not result.inserted_id:
+            raise HTTPException(
+                status_code=500, detail="Failed to create user")
+        return user_data
+    except Exception as e:
+        print(f"Error inserting user: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 # To update a user in MongoDB
 @app.put("/users", response_model=User, status_code=status.HTTP_200_OK)
