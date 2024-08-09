@@ -35,6 +35,8 @@ firebase_admin.initialize_app(cred)
 # In every function, id can be retrieved from request.state.user['uid'], and other claims can be retrieved in a similar way
 # We should only ever use the id in the backend that we get from the token, and not the id that is sent from the frontend
 # this is because the id from the frontend can be tampered with, but the id from the token is secure
+
+
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         if request.method == "OPTIONS":
@@ -80,6 +82,11 @@ async def startup_db_client():
     print("Connecting to MongoDB with URI:", MONGODB_URI)
     app.mongodb_client = AsyncIOMotorClient(MONGODB_URI)
     app.db = app.mongodb_client['stockcarter_db']
+    try:
+        await app.db.command("ping")
+        print("Successfully connected to MongoDB!")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {e}")
 
 
 @app.on_event("shutdown")
@@ -109,6 +116,8 @@ async def read_user(request: Request, db=Depends(get_database)):
     raise HTTPException(status_code=404, detail="User not found")
 
 # To create a user in MongoDB
+
+
 @app.post("/users", response_model=User, status_code=status.HTTP_201_CREATED)
 async def create_user(request: Request, user: User, db=Depends(get_database)):
     users_collection = db.users
@@ -117,6 +126,8 @@ async def create_user(request: Request, user: User, db=Depends(get_database)):
         raise HTTPException(
             status_code=422, detail="User ID is missing in the token")
 
+    # Frontend should see this and behave accordingly. For example, for google sign in it works with sign up too, so
+    # if it knows user already exists, it will send a .put request instead of a .post request
     existing_user = await users_collection.find_one({"_id": user_id})
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
@@ -136,6 +147,8 @@ async def create_user(request: Request, user: User, db=Depends(get_database)):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 # To update a user in MongoDB
+
+
 @app.put("/users", response_model=User, status_code=status.HTTP_200_OK)
 async def update_user(request: Request, user_update: UserUpdateModel, db=Depends(get_database)):
     users_collection = db.users

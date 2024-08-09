@@ -65,112 +65,119 @@ const Onboarding: React.FC = () => {
           className="space-y-6 w-full max-w-md"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
+          <div className="max-w-md px-4 mx-auto mt-12">
+            <label htmlFor="name" className="block py-2 text-gray-300">
               Name
             </label>
-            <input
-              type="text"
-              {...register('name', { required: 'Name is required' })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            />
+            <div className="flex items-center text-gray-700 border rounded-md">
+              <input
+                type="text"
+                {...register('name', { required: 'Name is required' })}
+                placeholder="Jordan..."
+                id="name"
+                className="w-full p-2.5 outline-none"
+              />
+            </div>
             {errors.name && (
               <p className="text-red-500 text-xs italic">
                 {errors.name.message}
               </p>
             )}
           </div>
-
-          <div>
+          <div className="max-w-md px-4 mx-auto mt-12">
             <label
               htmlFor="age"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Age
             </label>
-            <input
-              type="number"
-              {...register('age', { required: 'Age is required' })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            />
+            <div className="flex items-center text-gray-700 border rounded-md">
+              <input
+                type="number"
+                {...register('age', { required: 'Age is required' })}
+                placeholder="18+"
+                min={18}
+                id="name"
+                className="w-full p-2.5 outline-none"
+              />
+            </div>
             {errors.age && (
               <p className="text-red-500 text-xs italic">
                 {errors.age.message}
               </p>
             )}
           </div>
-
-          <div>
+          <div className="max-w-md px-4 mx-auto mt-12">
             <label
               htmlFor="experienceLevel"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Experience Level
             </label>
-            <select
-              {...register('experienceLevel', {
-                required: 'Experience level is required',
-              })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              {Object.values(ExperienceLevel).map((level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center text-gray-700 border rounded-md">
+              <select
+                {...register('experienceLevel', {
+                  required: 'Experience level is required',
+                })}
+                className="w-full p-2.5 outline-none"
+              >
+                {Object.values(ExperienceLevel).map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-
-          <div>
+          <div className="max-w-md px-4 mx-auto mt-12">
             <label
               htmlFor="investmentTimeframe"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Investment Timeframe
             </label>
-            <select
-              {...register('investmentTimeframe', {
-                required: 'Investment timeframe is required',
-              })}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              {Object.values(InvestmentTimeframe).map((timeframe) => (
-                <option key={timeframe} value={timeframe}>
-                  {timeframe}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center text-gray-700 border rounded-md">
+              <select
+                {...register('investmentTimeframe', {
+                  required: 'Investment timeframe is required',
+                })}
+                className="w-full p-2.5 outline-none"
+              >
+                {Object.values(InvestmentTimeframe).map((timeframe) => (
+                  <option key={timeframe} value={timeframe}>
+                    {timeframe}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-
-          <div>
+          <div className="max-w-md px-4 mx-auto mt-12">
             <label
               htmlFor="investorType"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Investor Type
             </label>
-            <select
-              multiple
-              onChange={handleInvestorTypeChange}
-              value={investorTypes}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              {Object.values(InvestorType).map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-            {errors.investorType && (
-              <p className="text-red-500 text-xs italic">
-                {errors.investorType.message}
-              </p>
-            )}
+            <div className="flex items-center text-gray-700 border rounded-md">
+              <select
+                multiple
+                onChange={handleInvestorTypeChange}
+                value={investorTypes}
+                className="w-full p-2.5 outline-none"
+              >
+                {Object.values(InvestorType).map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+              {errors.investorType && (
+                <p className="text-red-500 text-xs italic">
+                  {errors.investorType.message}
+                </p>
+              )}
+            </div>
           </div>
-
           <button
             type="submit"
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
