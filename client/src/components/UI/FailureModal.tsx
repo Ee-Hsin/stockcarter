@@ -1,22 +1,35 @@
 // import { Link } from "react-router-dom"
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 interface FailureModalProps {
   mainMessage?: string
   subMessage?: string
+  link?: string
+  linkMessage?: string
+  allowClose?: boolean
 }
 
 export const FailureModal: React.FC<FailureModalProps> = ({
   mainMessage = 'Error!',
   subMessage = 'Looks like something went wrong, you might want to try again ',
+  link = '',
+  linkMessage = 'Return Home',
+  allowClose = true,
 }) => {
   const [open, setOpen] = useState<boolean>(true)
+
+  const handleClose = () => {
+    if (allowClose) {
+      setOpen(false)
+    }
+  }
 
   return open ? (
     <div className="fixed inset-0 z-10 overflow-y-auto">
       <div
         className="fixed inset-0 w-full h-full bg-black opacity-40"
-        onClick={() => setOpen(false)}
+        onClick={handleClose}
       ></div>
       <div className="flex items-center min-h-screen px-4 py-8">
         <div className="relative w-full max-w-lg p-4 mx-auto bg-white rounded-md shadow-lg">
@@ -42,7 +55,11 @@ export const FailureModal: React.FC<FailureModalProps> = ({
               <p className="mt-2 text-[15px] leading-relaxed text-gray-500">
                 {subMessage}
               </p>
-              {/* <Link to="/">Click here to Return to the Main Page</Link> */}
+              <Link to={`/${link}`}>
+                <button className="mt-4 px-4 py-2 text-white bg-indigo-600 rounded-full duration-150 hover:bg-indigo-500 active:bg-indigo-700">
+                  {linkMessage}{' '}
+                </button>
+              </Link>
             </div>
           </div>
         </div>

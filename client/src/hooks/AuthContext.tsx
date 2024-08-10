@@ -21,6 +21,7 @@ export interface AuthContextType {
   signInWithGoogle: () => Promise<UserCredential>
   resetPassword: (email: string) => Promise<void>
   logOut: () => Promise<void>
+  isAuthenticated: boolean
 }
 export const UserContext = createContext<AuthContextType | null>(null)
 
@@ -31,7 +32,7 @@ interface AuthContextProviderProps {
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
-  const { user, userDetails } = useAuthState()
+  const { user, userDetails, isAuthenticated } = useAuthState()
 
   console.log('user', user)
   console.log('userDetails', userDetails)
@@ -67,6 +68,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         user,
         userDetails,
         logOut,
+        isAuthenticated,
       }}
     >
       {children}

@@ -3,7 +3,7 @@
 import { useRef, FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
-import { useResetPassword } from '../../hooks/query'
+import { useResetPassword } from '../../hooks/queries/authQuery'
 import { FailureModal } from '../UI/FailureModal'
 import { SuccessModal } from '../UI/SuccessModal'
 import { Loader } from '../UI/Loader'
@@ -86,7 +86,7 @@ export const ForgotPassword: React.FC = () => {
             </div>
           </form>
         )}
-        <p className="mt-10 text-center text-sm text-gray-800">
+        <p className="mt-10 text-center text-sm text-gray-400">
           Not a registered user?{' '}
           <Link
             to="/signup"

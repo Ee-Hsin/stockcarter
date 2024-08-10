@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { useCreateUser, useGoogleSignIn } from '../../hooks/query'
+import { useCreateUser, useGoogleSignIn } from '../../hooks/queries/authQuery'
 import { FailureModal } from '../UI/FailureModal'
 import { Loader } from '../UI/Loader'
 import { Link, Navigate } from 'react-router-dom'
@@ -36,9 +36,11 @@ export const SignUp = () => {
     googleMutation.mutate()
   }
 
+  //NOTE: These two are not needed as we protect the route in the route file
+
   //Navigate after successful sign up
-  if (mutation.isSuccess) {
-    return <Navigate to="/dashboard" />
+  if (mutation.isSuccess || googleMutation.isSuccess) {
+    return <Navigate to="/onboarding" />
   }
 
   // Protects form for when User is alr signed in
