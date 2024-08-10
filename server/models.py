@@ -34,18 +34,11 @@ class User(BaseModel):
     age: Optional[int] = None
     experienceLevel: Optional[ExperienceLevel] = None
     investmentTimeframe: Optional[InvestmentTimeframe] = None
-    investorType: List[InvestorType] = Field(default_factory=list)
+    investorType: Optional[InvestorType] = None
     createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updatedAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     class Config:
         populate_by_name = True
-    
-    # Limits number of investor types to 2
-    @validator('investorType')
-    def limit_investor_types(cls, value):
-        if len(value) > 2:
-            raise ValueError("You can select up to 2 investor types.")
-        return value
     
 class UserUpdateModel(BaseModel):
     isOnboarded: Optional[bool] = None
@@ -55,11 +48,4 @@ class UserUpdateModel(BaseModel):
     age: Optional[int] = None
     experienceLevel: Optional[ExperienceLevel] = None
     investmentTimeframe: Optional[InvestmentTimeframe] = None
-    investorType: Optional[List[InvestorType]] = None
-
-    # Limits number of investor types to 2
-    @validator('investorType', always=True)
-    def limit_investor_types(cls, value):
-        if value is not None and len(value) > 2:
-            raise ValueError("You can select up to 2 investor types.")
-        return value
+    investorType: Optional[InvestorType] = None

@@ -27,6 +27,6 @@ export interface OnboardingData {
   age: number
   experienceLevel: ExperienceLevel
   investmentTimeframe: InvestmentTimeframe
-  investorType: InvestorType[]
+  investorType: InvestorType
   isOnboarded: boolean
 }

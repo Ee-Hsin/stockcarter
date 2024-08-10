@@ -15,38 +15,13 @@ const Onboarding: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
-    watch,
-    setError,
-    clearErrors,
   } = useForm<OnboardingData>()
 
   const mutation = usePostOnboardingDetails()
 
   const onSubmit: SubmitHandler<OnboardingData> = (data) => {
-    mutation.mutate(data)
-  }
-
-  const investorTypes = watch('investorType')
-
-  // Handle change event for the multi-select dropdown
-  const handleInvestorTypeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    const selectedOptions = Array.from(event.target.options)
-      .filter((option) => option.selected)
-      .map((option) => option.value as InvestorType)
-
-    if (selectedOptions.length > 2) {
-      // Provide user feedback without changing the actual value
-      setError('investorType', {
-        type: 'manual',
-        message: 'You can select up to 2 investor types.',
-      })
-    } else {
-      clearErrors('investorType')
-      setValue('investorType', selectedOptions, { shouldValidate: true })
-    }
+    console.log(data)
+    // mutation.mutate(data)
   }
 
   return (
@@ -97,7 +72,7 @@ const Onboarding: React.FC = () => {
                 {...register('age', { required: 'Age is required' })}
                 placeholder="18+"
                 min={18}
-                id="name"
+                id="age"
                 className="w-full p-2.5 outline-none"
               />
             </div>
@@ -119,6 +94,7 @@ const Onboarding: React.FC = () => {
                 {...register('experienceLevel', {
                   required: 'Experience level is required',
                 })}
+                id="experienceLevel" // Added unique ID
                 className="w-full p-2.5 outline-none"
               >
                 {Object.values(ExperienceLevel).map((level) => (
@@ -141,6 +117,7 @@ const Onboarding: React.FC = () => {
                 {...register('investmentTimeframe', {
                   required: 'Investment timeframe is required',
                 })}
+                id="investmentTimeframe"
                 className="w-full p-2.5 outline-none"
               >
                 {Object.values(InvestmentTimeframe).map((timeframe) => (
@@ -160,9 +137,10 @@ const Onboarding: React.FC = () => {
             </label>
             <div className="flex items-center text-gray-700 border rounded-md">
               <select
-                multiple
-                onChange={handleInvestorTypeChange}
-                value={investorTypes}
+                {...register('investorType', {
+                  required: 'Investor Type is required',
+                })}
+                id="investorType"
                 className="w-full p-2.5 outline-none"
               >
                 {Object.values(InvestorType).map((type) => (
@@ -171,12 +149,12 @@ const Onboarding: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {errors.investorType && (
-                <p className="text-red-500 text-xs italic">
-                  {errors.investorType.message}
-                </p>
-              )}
             </div>
+            {errors.investorType && (
+              <p className="text-red-500 text-xs italic">
+                {errors.investorType.message}
+              </p>
+            )}
           </div>
           <button
             type="submit"
