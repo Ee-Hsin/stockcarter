@@ -61,91 +61,95 @@ export const SignIn: React.FC = () => {
         {mutation.isPending ? (
           <Loader />
         ) : (
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium leading-6 text-indigo-400"
-              >
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  {...register('email', { required: 'Email is required' })}
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-                />
-                {errors.email && (
-                  <p role="alert" className="text-red-500">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
+          <>
+            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              <div>
                 <label
-                  htmlFor="password"
+                  htmlFor="email"
                   className="block text-sm font-medium leading-6 text-indigo-400"
                 >
-                  Password
+                  Email address
                 </label>
+                <div className="mt-2">
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    {...register('email', { required: 'Email is required' })}
+                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                  />
+                  {errors.email && (
+                    <p role="alert" className="text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  {...register('password', {
-                    required: 'Password is required',
-                  })}
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-                />
-                {errors.password && (
-                  <p role="alert" className="text-red-500">
-                    {errors.password.message}
-                  </p>
-                )}
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="password"
+                    className="block text-sm font-medium leading-6 text-indigo-400"
+                  >
+                    Password
+                  </label>
+                </div>
+                <div className="mt-2">
+                  <input
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    {...register('password', {
+                      required: 'Password is required',
+                    })}
+                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                  />
+                  {errors.password && (
+                    <p role="alert" className="text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
               </div>
+              {mutation.isError && (
+                <p className="text-red-400">
+                  Your username or password is incorrect
+                </p>
+              )}
+              <div className="text-sm">
+                <Link
+                  to="/forgotPassword"
+                  className="font-semibold text-gray-600 hover:text-gray-500"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Sign In
+                </button>
+              </div>
+            </form>
+            <div className="mt-5 flex justify-center">
+              <GoogleSignInButton
+                onClick={handleGoogleSignIn}
+              ></GoogleSignInButton>
             </div>
-            {mutation.isError && (
-              <p className="text-red-400">
-                Your username or password is incorrect
-              </p>
-            )}
-            <div className="text-sm">
+            <p className="mt-5 text-center text-sm text-gray-300">
+              Not a Registered User?{' '}
               <Link
-                to="/forgotPassword"
-                className="font-semibold text-gray-600 hover:text-gray-500"
+                to="/signup"
+                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
               >
-                Forgot password?
-              </Link>
-            </div>
-            <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign In
-              </button>
-            </div>
-          </form>
+                Sign Up here!
+              </Link>{' '}
+            </p>
+          </>
         )}
-        <div className="mt-5 flex justify-center">
-          <GoogleSignInButton onClick={handleGoogleSignIn}></GoogleSignInButton>
-        </div>
-        <p className="mt-5 text-center text-sm text-gray-300">
-          Not a Registered User?{' '}
-          <Link
-            to="/signup"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >
-            Sign Up here!
-          </Link>{' '}
-        </p>
       </div>
     </div>
   )

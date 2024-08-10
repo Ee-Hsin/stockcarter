@@ -9,6 +9,7 @@ import {
   OnboardingData,
 } from '../types/onboardingTypes'
 import { usePostOnboardingDetails } from '../hooks/queries/userQuery'
+import { Navigate } from 'react-router-dom'
 
 const Onboarding: React.FC = () => {
   const {
@@ -20,8 +21,12 @@ const Onboarding: React.FC = () => {
   const mutation = usePostOnboardingDetails()
 
   const onSubmit: SubmitHandler<OnboardingData> = (data) => {
-    console.log(data)
-    // mutation.mutate(data)
+    const formattedData = {
+      ...data,
+      // Using type assertion to inform TypeScript that `age` is a string before conversion
+      age: parseInt(data.age as unknown as string, 10),
+    }
+    mutation.mutate(formattedData)
   }
 
   return (
@@ -32,7 +37,7 @@ const Onboarding: React.FC = () => {
           subMessage={mutation.error?.message || 'Please try again'}
         />
       )}
-
+      {mutation.isSuccess && <Navigate to="/dashboard" />}
       {mutation.isPending ? (
         <Loader />
       ) : (
