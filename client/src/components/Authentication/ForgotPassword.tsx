@@ -38,7 +38,7 @@ export const ForgotPassword: React.FC = () => {
           Please try again and contact us if the error persists"
         />
       )}
-      {mutation.isSuccess && (
+      {!mutation.isSuccess && (
         <SuccessModal
           mainMessage="Reset Password Link Sent"
           subMessage="A link to reset your password has been sent to your email"
@@ -57,7 +57,7 @@ export const ForgotPassword: React.FC = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-indigo-500"
+                className="block text-sm font-medium leading-6 text-white"
               >
                 Email address{' '}
                 <small className="text-sm font-semibold leading-6 text-gray-400">
@@ -79,7 +79,7 @@ export const ForgotPassword: React.FC = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-customPrimary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-customPrimaryHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-customPrimaryHover"
               >
                 Submit
               </button>
@@ -90,7 +90,7 @@ export const ForgotPassword: React.FC = () => {
           Not a registered user?{' '}
           <Link
             to="/signup"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
           >
             Sign Up here!
           </Link>{' '}

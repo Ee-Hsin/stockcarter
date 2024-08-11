@@ -74,9 +74,14 @@ const Onboarding: React.FC = () => {
             <div className="flex items-center text-gray-700 border rounded-md">
               <input
                 type="number"
-                {...register('age', { required: 'Age is required' })}
+                {...register('age', {
+                  required: 'Age is required',
+                  min: {
+                    value: 18,
+                    message: 'You must be at least 18 years old',
+                  },
+                })}
                 placeholder="18+"
-                min={18}
                 id="age"
                 className="w-full p-2.5 outline-none"
               />
@@ -161,12 +166,14 @@ const Onboarding: React.FC = () => {
               </p>
             )}
           </div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Complete Onboarding
-          </button>
+          <div className="max-w-md px-4 mx-auto mt-12">
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-customPrimary hover:bg-customPrimaryHover focus:outline-none focus:bg-customPrimaryHover focus:ring-2 focus:ring-offset-2"
+            >
+              Complete Onboarding
+            </button>
+          </div>
         </form>
       )}
     </div>

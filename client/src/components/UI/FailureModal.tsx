@@ -56,7 +56,7 @@ export const FailureModal: React.FC<FailureModalProps> = ({
                 {subMessage}
               </p>
               <Link to={`/${link}`}>
-                <button className="mt-4 px-4 py-2 text-white bg-indigo-600 rounded-full duration-150 hover:bg-indigo-500 active:bg-indigo-700">
+                <button className="mt-4 px-4 py-2 text-white bg-customPrimary rounded-full duration-150 hover:bg-customPrimaryHover active:bg-customPrimaryHover">
                   {linkMessage}{' '}
                 </button>
               </Link>

@@ -66,7 +66,7 @@ export const SignIn: React.FC = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-indigo-400"
+                  className="block text-sm font-medium leading-6 text-white"
                 >
                   Email address
                 </label>
@@ -90,7 +90,7 @@ export const SignIn: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <label
                     htmlFor="password"
-                    className="block text-sm font-medium leading-6 text-indigo-400"
+                    className="block text-sm font-medium leading-6 text-white"
                   >
                     Password
                   </label>
@@ -120,7 +120,7 @@ export const SignIn: React.FC = () => {
               <div className="text-sm">
                 <Link
                   to="/forgotPassword"
-                  className="font-semibold text-gray-600 hover:text-gray-500"
+                  className="font-semibold text-gray-500 hover:text-gray-600"
                 >
                   Forgot password?
                 </Link>
@@ -128,7 +128,7 @@ export const SignIn: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex w-full justify-center rounded-md bg-customPrimary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-customPrimaryHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-customPrimary"
                 >
                   Sign In
                 </button>
@@ -143,7 +143,7 @@ export const SignIn: React.FC = () => {
               Not a Registered User?{' '}
               <Link
                 to="/signup"
-                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+                className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
               >
                 Sign Up here!
               </Link>{' '}

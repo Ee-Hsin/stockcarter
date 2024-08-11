@@ -69,7 +69,7 @@ export const SignUp = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium leading-6 text-indigo-400"
+                className="block text-sm font-medium leading-6 text-white"
               >
                 Email address
               </label>
@@ -81,7 +81,7 @@ export const SignUp = () => {
                   {...register('email', {
                     required: 'An email is required',
                   })}
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
                 />
                 {errors.email && (
                   <p role="alert" className="text-red-500">
@@ -95,7 +95,7 @@ export const SignUp = () => {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-indigo-400"
+                  className="block text-sm font-medium leading-6 text-white"
                 >
                   Password
                 </label>
@@ -118,7 +118,7 @@ export const SignUp = () => {
                         'Password must include uppercase, lowercase, and numbers',
                     },
                   })}
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-insetsm:text-sm sm:leading-6"
                 />
                 {errors.password && (
                   <p role="alert" className="text-red-500">
@@ -130,7 +130,7 @@ export const SignUp = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-customPrimary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-customPrimaryHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-customPrimaryHover"
               >
                 Sign Up
               </button>
@@ -144,7 +144,7 @@ export const SignUp = () => {
           Already have an account?{' '}
           <Link
             to="/signin"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
           >
             Login Here!
           </Link>{' '}
