@@ -38,7 +38,7 @@ export const ForgotPassword: React.FC = () => {
           Please try again and contact us if the error persists"
         />
       )}
-      {!mutation.isSuccess && (
+      {mutation.isSuccess && (
         <SuccessModal
           mainMessage="Reset Password Link Sent"
           subMessage="A link to reset your password has been sent to your email"
@@ -90,7 +90,7 @@ export const ForgotPassword: React.FC = () => {
           Not a registered user?{' '}
           <Link
             to="/signup"
-            className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
+            className="font-semibold leading-6 text-customLink hover:text-customLinkHover"
           >
             Sign Up here!
           </Link>{' '}

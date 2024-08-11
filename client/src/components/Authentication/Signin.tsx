@@ -143,7 +143,7 @@ export const SignIn: React.FC = () => {
               Not a Registered User?{' '}
               <Link
                 to="/signup"
-                className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
+                className="font-semibold leading-6 text-customLink hover:text-customLinkHover"
               >
                 Sign Up here!
               </Link>{' '}

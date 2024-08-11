@@ -11,10 +11,7 @@ export const NotFoundPage: React.FC = () => {
         <p className="mb-4">
           Sorry, the page you are looking for does not exist.
         </p>
-        <Link
-          to="/"
-          className="text-customPrimary hover:text-customPrimaryHover"
-        >
+        <Link to="/" className="text-customLink hover:text-customLinkHover">
           Return Home
         </Link>
       </div>

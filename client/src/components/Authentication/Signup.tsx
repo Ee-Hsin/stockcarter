@@ -144,7 +144,7 @@ export const SignUp = () => {
           Already have an account?{' '}
           <Link
             to="/signin"
-            className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
+            className="font-semibold leading-6 text-customLink hover:text-customLinkHover"
           >
             Login Here!
           </Link>{' '}
