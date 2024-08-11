@@ -17,8 +17,10 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-white">
-      <button onClick={handleSignOut}>Logout</button>
+    <div className="bg-customSecondary">
+      <button onClick={handleSignOut} className="text-white">
+        Logout
+      </button>
     </div>
   )
 }
