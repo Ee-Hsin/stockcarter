@@ -8,7 +8,7 @@ const LandingPage: React.FC = () => {
   return (
     <div className="flex flex-col justify-center px-8 md:px-4 bg-customSecondary w-screen h-screen">
       <div className="text-3xl md:text-4xl mx-auto font-normal text-neutral-600 dark:text-neutral-400">
-        invest
+        {'invest '}
         <FlipWords words={words} /> <br />
         with the power of stockcarter.
       </div>
