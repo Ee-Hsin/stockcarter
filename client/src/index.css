@@ -1,7 +1,13 @@
+@import url('non.geist');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: 'Geist Variable';
+}
+
+/* Styles for Aceternity */
 @layer base {
   :root {
     --background: 0 0% 100%;

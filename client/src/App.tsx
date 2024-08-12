@@ -21,7 +21,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
         <Router>
-          <div className="w-screen h-screen">
+          <div className={`w-screen h-screen`}>
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route
