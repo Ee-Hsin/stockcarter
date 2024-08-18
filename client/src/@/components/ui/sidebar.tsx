@@ -1,10 +1,11 @@
 'use client'
 import { cn } from '../../lib/utils'
-import { Link, LinkProps } from 'react-router-dom'
+import { Link, LinkProps, useNavigate } from 'react-router-dom'
 import React, { useState, createContext } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { IconMenu2, IconX } from '@tabler/icons-react'
+import { IconArrowLeft, IconMenu2, IconX } from '@tabler/icons-react'
 import { useSidebar } from '../../../hooks/useSidebar'
+import { useAuth } from '../../../hooks/useAuth'
 
 interface Links {
   label: string
@@ -179,5 +180,49 @@ export const SidebarLink = ({
         {link.label}
       </motion.span>
     </Link>
+  )
+}
+
+export const LogOutButton = ({
+  className,
+  ...props
+}: {
+  className?: string
+  props?: LinkProps
+}) => {
+  const { open, animate } = useSidebar()
+  const { logOut } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSignOut = async (): Promise<void> => {
+    logOut()
+      .then(() => {
+        navigate('/')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+  return (
+    <button
+      onClick={handleSignOut}
+      className={cn(
+        'flex items-center justify-start gap-2  group/sidebar py-2',
+        className,
+      )}
+      {...props}
+    >
+      <IconArrowLeft className="text-neutral-200 h-5 w-5 flex-shrink-0" />
+
+      <motion.span
+        animate={{
+          display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
+          opacity: animate ? (open ? 1 : 0) : 1,
+        }}
+        className="text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+      >
+        logout
+      </motion.span>
+    </button>
   )
 }

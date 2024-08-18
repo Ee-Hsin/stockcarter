@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { FailureModal } from '../components/UI/FailureModal'
 import { SuccessModal } from '../components/UI/SuccessModal'
-import { Sidebar, SidebarBody, SidebarLink } from '../@/components/ui/sidebar'
+import {
+  LogOutButton,
+  Sidebar,
+  SidebarBody,
+  SidebarLink,
+} from '../@/components/ui/sidebar'
 import { Link } from 'react-router-dom'
 import {
   IconDashboard,
@@ -18,7 +23,7 @@ interface ProtectedAuthRouteProps {
 
 const links = [
   {
-    label: 'Dashboard',
+    label: 'dashboard',
     href: '/dashboard',
     icon: (
       <IconDashboard
@@ -28,7 +33,7 @@ const links = [
     ), // Adjust the icon size if needed
   },
   {
-    label: 'Transactions',
+    label: 'transactions',
     href: '/transactions',
     icon: (
       <IconExchange
@@ -38,14 +43,14 @@ const links = [
     ),
   },
   {
-    label: 'Profile',
+    label: 'profile',
     href: '/profile',
     icon: (
       <IconUser size={20} className="text-neutral-200 h-5 w-5 flex-shrink-0" />
     ),
   },
   {
-    label: 'Settings',
+    label: 'settings',
     href: '/settings',
     icon: (
       <IconSettings
@@ -95,6 +100,7 @@ export const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
                 {links.map((link, idx) => (
                   <SidebarLink key={idx} link={link} />
                 ))}
+                <LogOutButton />
               </div>
             </div>
             <div>
@@ -126,10 +132,7 @@ export const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
 
 export const Logo = () => {
   return (
-    <Link
-      to="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
+    <div className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
       <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
       <motion.span
         initial={{ opacity: 0 }}
@@ -138,7 +141,7 @@ export const Logo = () => {
       >
         stockcarter
       </motion.span>
-    </Link>
+    </div>
   )
 }
 export const LogoIcon = () => {
