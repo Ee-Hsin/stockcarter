@@ -19,7 +19,7 @@ module.exports = {
     extend: {
       colors: {
         customPrimary: '#202638', // Custom color for #D03737
-        customPrimaryHover: '#181E2E',
+        customPrimaryHover: '#212739',
         customSecondary: '#080808', // Custom color for #0C1248
         customSecondaryHover: '#1F1F1F',
         customGrey: '#B2B2B2',

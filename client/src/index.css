@@ -3,8 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+* {
   font-family: 'Geist Variable';
+  text-transform: lowercase;
 }
 
 /* Styles for Aceternity */

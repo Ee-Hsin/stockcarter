@@ -109,7 +109,7 @@ const Onboarding: React.FC = () => {
               >
                 {Object.values(ExperienceLevel).map((level) => (
                   <option key={level} value={level}>
-                    {level}
+                    {level.toLocaleLowerCase()}
                   </option>
                 ))}
               </select>
@@ -132,7 +132,7 @@ const Onboarding: React.FC = () => {
               >
                 {Object.values(InvestmentTimeframe).map((timeframe) => (
                   <option key={timeframe} value={timeframe}>
-                    {timeframe}
+                    {timeframe.toLocaleLowerCase()}
                   </option>
                 ))}
               </select>
@@ -155,7 +155,7 @@ const Onboarding: React.FC = () => {
               >
                 {Object.values(InvestorType).map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {type.toLocaleLowerCase()}
                   </option>
                 ))}
               </select>
@@ -169,9 +169,9 @@ const Onboarding: React.FC = () => {
           <div className="max-w-md px-4 mx-auto mt-12">
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-customPrimary hover:bg-customPrimaryHover focus:outline-none focus:bg-customPrimaryHover focus:ring-2 focus:ring-offset-2"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-customPrimary hover:bg-customPrimaryHover focus:outline-none focus:bg-customPrimaryHover"
             >
-              Complete Onboarding
+              complete onboarding
             </button>
           </div>
         </form>

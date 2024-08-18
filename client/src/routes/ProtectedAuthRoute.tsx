@@ -69,24 +69,28 @@ export const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
 
   if (!user) {
     return (
-      <FailureModal
-        mainMessage="Not Signed In!"
-        subMessage="You must sign in to gain access to this page"
-        linkMessage="Head to Sign In"
-        link="signin"
-        allowClose={false}
-      />
+      <div className="w-screen h-screen bg-customSecondary">
+        <FailureModal
+          mainMessage="not signed In!"
+          subMessage="you must sign in to gain access to this page"
+          linkMessage="head to sign In"
+          link="signin"
+          allowClose={false}
+        />
+      </div>
     )
     // If they reach here, it means they've signed in but they're not onboarded
   } else if (!userDetails?.isOnboarded) {
     return (
-      <SuccessModal
-        mainMessage="Welcome to StockCarter!"
-        subMessage="You're in! And we need you to complete our onboarding process!"
-        link="onboarding"
-        linkMessage="Head to Onboarding"
-        allowClose={false}
-      />
+      <div className="w-screen h-screen bg-customSecondary">
+        <SuccessModal
+          mainMessage="welcome to stockCarter!"
+          subMessage="you're in! and we need you to complete our onboarding process!"
+          link="onboarding"
+          linkMessage="head to onboarding"
+          allowClose={false}
+        />
+      </div>
     )
   } else {
     return (
@@ -100,25 +104,10 @@ export const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
                 {links.map((link, idx) => (
                   <SidebarLink key={idx} link={link} />
                 ))}
-                <LogOutButton />
               </div>
             </div>
             <div>
-              <SidebarLink
-                link={{
-                  label: userDetails.name || 'User',
-                  href: '#',
-                  icon: (
-                    <img
-                      src="https://assets.aceternity.com/manu.png"
-                      className="h-7 w-7 flex-shrink-0 rounded-full"
-                      width={50}
-                      height={50}
-                      alt="Avatar"
-                    />
-                  ),
-                }}
-              />
+              <LogOutButton />
             </div>
           </SidebarBody>
         </Sidebar>
@@ -132,12 +121,12 @@ export const ProtectedAuthRoute: React.FC<ProtectedAuthRouteProps> = ({
 
 export const Logo = () => {
   return (
-    <div className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20">
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+    <div className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20">
+      <div className="h-5 w-6 bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
+        className="font-medium ext-white whitespace-pre"
       >
         stockcarter
       </motion.span>
@@ -150,7 +139,7 @@ export const LogoIcon = () => {
       to="#"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      <div className="h-5 w-6 bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
     </Link>
   )
 }

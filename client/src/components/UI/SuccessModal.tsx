@@ -31,7 +31,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
         onClick={handleClose}
       ></div>
       <div className="flex items-center min-h-screen px-4 py-8">
-        <div className="relative w-full max-w-lg p-4 mx-auto bg-white rounded-md shadow-lg">
+        <div className="relative w-full max-w-lg p-4 mx-auto bg-customPrimary rounded-md shadow-lg">
           <div className="mt-3">
             <div className="flex items-center justify-center w-12 h-12 mx-auto bg-green-100 rounded-full">
               <svg
@@ -48,14 +48,12 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
               </svg>
             </div>
             <div className="mt-2 text-center">
-              <h4 className="text-lg font-medium text-gray-800">
-                {mainMessage}
-              </h4>
-              <p className="mt-2 text-[15px] leading-relaxed text-gray-500">
+              <h4 className="text-lg font-medium text-white">{mainMessage}</h4>
+              <p className="mt-2 px-10 text-[15px] leading-relaxed text-gray-500">
                 {subMessage}
               </p>
               <Link to={`/${link}`}>
-                <button className="mt-4 px-4 py-2 text-white bg-green-900 rounded-full duration-150 hover:bg-green-800 active:bg-green-800">
+                <button className="mt-4 px-4 py-2 rounded-full text-customLink hover:text-customLinkHover">
                   {linkMessage}{' '}
                 </button>
               </Link>
