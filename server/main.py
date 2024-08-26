@@ -14,8 +14,36 @@ from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, auth
 from pymongo.errors import PyMongoError
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load MongoDB URI from environment variables
+    load_dotenv()
+    MONGODB_URI = os.getenv("MONGODB_URI")
+    print("Connecting to MongoDB with URI:", MONGODB_URI)
+    app.mongodb_client = AsyncIOMotorClient(MONGODB_URI)
+    app.db = app.mongodb_client['stockcarter_db']
+    try:
+        await app.db.command("ping")
+        print("Successfully connected to MongoDB!")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {e}")
+
+    # Check Firebase initialization
+    if not firebase_admin._apps:
+        print("Firebase Admin SDK initialization failed")
+        raise Exception("Firebase Admin SDK initialization failed")
+    else:
+        print("Firebase Admin SDK initialized correctly")
+
+    yield  # At this point, the app is running and serving requests
+
+    # Shutdown logic
+    app.mongodb_client.close()
+    print("MongoDB client closed")
+
+app = FastAPI(lifespan=lifespan)
 
 # Configure CORS
 app.add_middleware(
@@ -77,33 +105,6 @@ class LogRequestBodyMiddleware(BaseHTTPMiddleware):
 
 
 app.add_middleware(LogRequestBodyMiddleware)
-
-
-@app.on_event("startup")
-async def startup_db_client():
-    # Load MongoDB URI from environment variables
-    load_dotenv()
-    MONGODB_URI = os.getenv("MONGODB_URI")
-    print("Connecting to MongoDB with URI:", MONGODB_URI)
-    app.mongodb_client = AsyncIOMotorClient(MONGODB_URI)
-    app.db = app.mongodb_client['stockcarter_db']
-    try:
-        await app.db.command("ping")
-        print("Successfully connected to MongoDB!")
-    except Exception as e:
-        print(f"Failed to connect to MongoDB: {e}")
-
-    # Check Firebase initialization
-    if not firebase_admin._apps:
-        print("Firebase Admin SDK initialization failed")
-        raise Exception("Firebase Admin SDK initialization failed")
-    else:
-        print("Firebase Admin SDK initialized correctly")
-
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    app.mongodb_client.close()
 
 
 def get_database():
