@@ -81,7 +81,7 @@ export const SignUp = () => {
                   {...register('email', {
                     required: 'An email is required',
                   })}
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
+                  className="focus:outline-none block w-full rounded-md border-0 p-1.5 text-gray-900 placeholder:text-gray-400 sm:text-sm sm:leading-6"
                 />
                 {errors.email && (
                   <p role="alert" className="text-red-500">
@@ -118,7 +118,7 @@ export const SignUp = () => {
                         'Password must include uppercase, lowercase, and numbers',
                     },
                   })}
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-insetsm:text-sm sm:leading-6"
+                  className="focus:outline-none block w-full rounded-md border-0 p-1.5 text-gray-900 placeholder:text-gray-400 sm:text-sm sm:leading-6"
                 />
                 {errors.password && (
                   <p role="alert" className="text-red-500">
@@ -132,7 +132,7 @@ export const SignUp = () => {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-customPrimary px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-customPrimaryHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-customPrimaryHover"
               >
-                Sign Up
+                sign up
               </button>
             </div>
           </form>
@@ -144,7 +144,7 @@ export const SignUp = () => {
           Already have an account?{' '}
           <Link
             to="/signin"
-            className="font-semibold leading-6 text-customPrimary hover:text-customPrimaryHover"
+            className="font-semibold leading-6 text-customLink hover:text-customLinkHover"
           >
             Login Here!
           </Link>{' '}

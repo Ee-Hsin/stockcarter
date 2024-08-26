@@ -14,8 +14,36 @@ from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, auth
 from pymongo.errors import PyMongoError
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load MongoDB URI from environment variables
+    load_dotenv()
+    MONGODB_URI = os.getenv("MONGODB_URI")
+    print("Connecting to MongoDB with URI:", MONGODB_URI)
+    app.mongodb_client = AsyncIOMotorClient(MONGODB_URI)
+    app.db = app.mongodb_client['stockcarter_db']
+    try:
+        await app.db.command("ping")
+        print("Successfully connected to MongoDB!")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {e}")
+
+    # Check Firebase initialization
+    if not firebase_admin._apps:
+        print("Firebase Admin SDK initialization failed")
+        raise Exception("Firebase Admin SDK initialization failed")
+    else:
+        print("Firebase Admin SDK initialized correctly")
+
+    yield  # At this point, the app is running and serving requests
+
+    # Shutdown logic
+    app.mongodb_client.close()
+    print("MongoDB client closed")
+
+app = FastAPI(lifespan=lifespan)
 
 # Configure CORS
 app.add_middleware(
@@ -31,7 +59,7 @@ app.add_middleware(
 
 # Initialize Firebase Admin SDK (with credentials), this file should be .gitignored
 cred = credentials.Certificate("stockcarter-firebase-adminsdk.json")
-firebase_admin.initialize_app(cred)
+default_app = firebase_admin.initialize_app(cred)
 
 # Ensures that the token is valid and decodes it, puts the token in the request state
 # In every function, id can be retrieved from request.state.user['uid'], and other claims can be retrieved in a similar way
@@ -50,11 +78,14 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         token = authorization.split(" ")[1]
         try:
+            print("Attempting to verify token...")
             # Decode the token
             decoded_token = auth.verify_id_token(token)
+            print(f"Token verified: {decoded_token}")
             # Attach user info to request state
             request.state.user = decoded_token
         except Exception as e:
+            print(f"Token verification failed: {e}")
             return JSONResponse({"detail": "Invalid token"}, status_code=403)
 
         response = await call_next(request)
@@ -76,26 +107,6 @@ class LogRequestBodyMiddleware(BaseHTTPMiddleware):
 app.add_middleware(LogRequestBodyMiddleware)
 
 
-@app.on_event("startup")
-async def startup_db_client():
-    # Load MongoDB URI from environment variables
-    load_dotenv()
-    MONGODB_URI = os.getenv("MONGODB_URI")
-    print("Connecting to MongoDB with URI:", MONGODB_URI)
-    app.mongodb_client = AsyncIOMotorClient(MONGODB_URI)
-    app.db = app.mongodb_client['stockcarter_db']
-    try:
-        await app.db.command("ping")
-        print("Successfully connected to MongoDB!")
-    except Exception as e:
-        print(f"Failed to connect to MongoDB: {e}")
-
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    app.mongodb_client.close()
-
-
 def get_database():
     return app.db
 
@@ -113,10 +124,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.get("/users", response_model=User, status_code=status.HTTP_200_OK)
 async def read_user(request: Request, db=Depends(get_database)):
     try:
+        print(f"User: {request.state.user}")
         users_collection = db.users
         user_id = request.state.user.get("uid")
         user_data = await users_collection.find_one({"_id": user_id})
-
+        print(f"User data: {user_data}")
         if user_data:
             # Deserialize strings back to enums, handle None values
             if 'experienceLevel' in user_data and user_data['experienceLevel'] is not None:

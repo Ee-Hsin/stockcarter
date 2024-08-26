@@ -3,7 +3,7 @@ import { SignIn } from '../components/Authentication/Signin'
 
 const SignInPage: React.FC = () => {
   return (
-    <div className="h-screen w-screen">
+    <div className="bg-customSecondary h-screen w-screen">
       <SignIn />
     </div>
   )

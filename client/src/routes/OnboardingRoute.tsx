@@ -9,9 +9,9 @@ export const OnboardingRoute: React.FC = () => {
   if (!user) {
     return (
       <FailureModal
-        mainMessage="Not Signed In!"
-        subMessage="You must sign in to gain access to this page"
-        linkMessage="Head to Sign In"
+        mainMessage="not signed in!"
+        subMessage="you must sign in to gain access to this page"
+        linkMessage="head to sign In"
         link="signin"
         allowClose={false}
       />
