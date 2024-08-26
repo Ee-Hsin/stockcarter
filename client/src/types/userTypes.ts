@@ -14,6 +14,7 @@ export interface UserDetails {
   experienceLevel?: ExperienceLevel
   investmentTimeframe?: InvestmentTimeframe
   investorType?: InvestorType[]
+  transactions: string[] // Array of transaction IDs
   createdAt: string // Dates will be handled as ISO strings
   updatedAt: string
 }
