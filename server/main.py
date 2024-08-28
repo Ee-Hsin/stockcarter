@@ -1,36 +1,34 @@
-from fastapi import FastAPI, HTTPException, status, Request, Depends
+from fastapi import FastAPI, status, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from motor.motor_asyncio import AsyncIOMotorClient
-from starlette.middleware.base import BaseHTTPMiddleware
-from pymongo.collection import ReturnDocument
-# Import the models from models.py
-from models import User, UserUpdateModel, ExperienceLevel, InvestmentTimeframe, InvestorType, Transaction, TransactionResponse
-from datetime import datetime, timezone
 import uvicorn
 import os
 from dotenv import load_dotenv
 import firebase_admin
-from firebase_admin import credentials, auth
-from pymongo.errors import PyMongoError
+from firebase_admin import credentials
 from contextlib import asynccontextmanager
-from typing import List, Union
-
+from middlewares.auth_middleware import AuthMiddleware
+from middlewares.log_request_middleware import LogRequestBodyMiddleware
+from routers import users, transactions
+from services import database as db_service  # Import database service
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Load MongoDB URI from environment variables
-    load_dotenv()
-    MONGODB_URI = os.getenv("MONGODB_URI")
-    print("Connecting to MongoDB with URI:", MONGODB_URI)
-    app.mongodb_client = AsyncIOMotorClient(MONGODB_URI)
-    app.db = app.mongodb_client['stockcarter_db']
+    # Initialize MongoDB client and database
+    db_service.init_database()
+
+    # Check MongoDB connection
     try:
         await app.db.command("ping")
         print("Successfully connected to MongoDB!")
     except Exception as e:
         print(f"Failed to connect to MongoDB: {e}")
+
+    # Initialize Firebase Admin SDK (with credentials), this file should be .gitignored
+    cred = credentials.Certificate("stockcarter-firebase-adminsdk.json")
+    default_app = firebase_admin.initialize_app(cred)
 
     # Check Firebase initialization
     if not firebase_admin._apps:
@@ -41,8 +39,8 @@ async def lifespan(app: FastAPI):
 
     yield  # At this point, the app is running and serving requests
 
-    # Shutdown logic
-    app.mongodb_client.close()
+    # Cleanup/Shutdown logic
+    db_service.close_database()
     print("MongoDB client closed")
 
 app = FastAPI(lifespan=lifespan)
@@ -59,59 +57,9 @@ app.add_middleware(
                    "Origin", "Accept", "X-Requested-With"],  # Explicitly allow headers
 )
 
-# Initialize Firebase Admin SDK (with credentials), this file should be .gitignored
-cred = credentials.Certificate("stockcarter-firebase-adminsdk.json")
-default_app = firebase_admin.initialize_app(cred)
-
-# Ensures that the token is valid and decodes it, puts the token in the request state
-# In every function, id can be retrieved from request.state.user['uid'], and other claims can be retrieved in a similar way
-# We should only ever use the id in the backend that we get from the token, and not the id that is sent from the frontend
-# this is because the id from the frontend can be tampered with, but the id from the token is secure
-
-
-class AuthMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        if request.method == "OPTIONS":
-            return await call_next(request)
-        print(f"Method: {request.method}, Path: {request.url.path}")
-        authorization: str = request.headers.get("Authorization")
-        if not authorization:
-            return JSONResponse({"detail": "Authorization header is missing"}, status_code=401)
-
-        token = authorization.split(" ")[1]
-        try:
-            print("Attempting to verify token...")
-            # Decode the token
-            decoded_token = auth.verify_id_token(token)
-            print(f"Token verified: {decoded_token}")
-            # Attach user info to request state
-            request.state.user = decoded_token
-        except Exception as e:
-            print(f"Token verification failed: {e}")
-            return JSONResponse({"detail": "Invalid token"}, status_code=403)
-
-        response = await call_next(request)
-        return response
-
-
-# Adding the AuthMiddleware to the FastAPI app
+# Adding the AuthMiddleware and Logging Body Middleware to the FastAPI app
 app.add_middleware(AuthMiddleware)
-
-
-class LogRequestBodyMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        body = await request.body()
-        print(f"Incoming request body: {body.decode()}")
-        response = await call_next(request)
-        return response
-
-
 app.add_middleware(LogRequestBodyMiddleware)
-
-
-def get_database():
-    return app.db
-
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -120,190 +68,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": exc.errors(), "body": exc.body},
     )
 
-# To get a user from MongoDB
-
-
-@app.get("/users", response_model=User, status_code=status.HTTP_200_OK)
-async def read_user(request: Request, db=Depends(get_database)):
-    try:
-        print(f"User: {request.state.user}")
-        users_collection = db.users
-        user_id = request.state.user.get("uid")
-        user_data = await users_collection.find_one({"_id": user_id})
-        print(f"User data: {user_data}")
-        if user_data:
-            # Deserialize strings back to enums, handle None values
-            if 'experienceLevel' in user_data and user_data['experienceLevel'] is not None:
-                user_data['experienceLevel'] = ExperienceLevel(
-                    user_data['experienceLevel'])
-            if 'investmentTimeframe' in user_data and user_data['investmentTimeframe'] is not None:
-                user_data['investmentTimeframe'] = InvestmentTimeframe(
-                    user_data['investmentTimeframe'])
-            if 'investorType' in user_data and user_data['investorType'] is not None:
-                user_data['investorType'] = InvestorType(
-                    user_data['investorType'])
-
-            return User(**user_data)
-
-        raise HTTPException(status_code=404, detail="User not found")
-    except Exception as e:
-        print(f"Error reading user: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# To create a user in MongoDB
-
-
-@app.post("/users", response_model=User, status_code=status.HTTP_201_CREATED)
-async def create_user(request: Request, user: User, db=Depends(get_database)):
-    try:
-        users_collection = db.users
-        user_id = request.state.user.get('uid')
-
-        if not user_id:
-            raise HTTPException(
-                status_code=422, detail="User ID is missing in the token")
-
-        existing_user = await users_collection.find_one({"_id": user_id})
-        if existing_user:
-            raise HTTPException(status_code=400, detail="User already exists")
-
-        user_data = user.dict(exclude={'id'})
-        # Set user ID from token as it is untampered
-        user_data['_id'] = user_id
-        user_data['createdAt'] = user_data['updatedAt'] = datetime.now(
-            timezone.utc)
-
-        result = await users_collection.insert_one(user_data)
-        if not result.inserted_id:
-            raise HTTPException(
-                status_code=500, detail="Failed to create user")
-
-        return user_data
-    except PyMongoError as e:
-        print(f"MongoDB error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Database error")
-    except HTTPException as http_exc:
-        print(f"HTTP error: {str(http_exc)}")
-        raise http_exc  # Re-raise HTTP exceptions to preserve the original status code
-    except Exception as e:
-        print(f"Unexpected error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-# To update a user in MongoDB
-
-
-@app.put("/users", response_model=User, status_code=status.HTTP_200_OK)
-async def update_user(request: Request, user_update: UserUpdateModel, db=Depends(get_database)):
-    try:
-        users_collection = db.users
-        user_id = request.state.user['uid']
-        existing_user = await users_collection.find_one({"_id": user_id})
-        if not existing_user:
-            raise HTTPException(status_code=404, detail="User not found")
-
-        update_data = user_update.dict(exclude_unset=True)
-
-        # Serialize enums to strings before updating
-        if 'experienceLevel' in update_data and isinstance(update_data['experienceLevel'], ExperienceLevel):
-            update_data['experienceLevel'] = update_data['experienceLevel'].value
-        if 'investmentTimeframe' in update_data and isinstance(update_data['investmentTimeframe'], InvestmentTimeframe):
-            update_data['investmentTimeframe'] = update_data['investmentTimeframe'].value
-        if 'investorType' in update_data and isinstance(update_data['investorType'], InvestorType):
-            update_data['investorType'] = update_data['investorType'].value
-
-        updated_user = await users_collection.find_one_and_update(
-            {"_id": user_id},
-            {"$set": update_data},
-            return_document=ReturnDocument.AFTER
-        )
-
-        if not updated_user:
-            raise HTTPException(
-                status_code=404, detail="User not found after update")
-        return updated_user
-    except Exception as e:
-        print(f"Error updating user: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-
-@app.get("/transactions", response_model=List[Transaction], status_code=status.HTTP_200_OK)
-async def get_transactions(request: Request, db=Depends(get_database)):
-    try:
-        user_id = request.state.user.get("uid")
-        # Access the users and transactions collections (We will be
-        # using the .transactions field in the user document to get the transactions)
-        # because .find_one for users is O(1) as it is indexed while
-        # .find for transactions is O(n)
-        users_collection = db.users
-        transactions_collection = db.transactions
-
-        # Fetch user document to get transaction IDs
-        user_data = await users_collection.find_one({"_id": user_id})
-        if not user_data:
-            raise HTTPException(status_code=404, detail="User not found")
-
-         # Get the list of transaction IDs from the user's document
-        transaction_ids = user_data.get("transactions", [])
-        if not transaction_ids:
-            return []  # Return empty list if no transactions found
-
-        # Query transactions by their IDs
-        cursor = transactions_collection.find(
-            {"_id": {"$in": transaction_ids}})
-        transactions = await cursor.to_list(length=None)
-
-        # Convert transactions from BSON to Pydantic models
-        transactions_list = []
-        for transaction in transactions:
-            # Convert ObjectId to string
-            transaction['id'] = str(transaction['_id'])
-            transactions_list.append(Transaction(**transaction))
-
-        return transactions_list
-
-    except Exception as e:
-        print(f"Error getting transactions: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-
-
-@app.post("/transactions", response_model=TransactionResponse, status_code=status.HTTP_201_CREATED)
-async def create_transaction(request: Request, transactions: Union[Transaction, List[Transaction]], db=Depends(get_database)):
-    try:
-        user_id = request.state.user.get("uid")
-        if not user_id:
-            raise HTTPException(status_code=401, detail="User ID not found")
-
-        transactions_collection = db.transactions
-        users_collection = db.users
-
-        #We allow a single transaction to be passed as well as a list of transactions
-        #We convert single transactions to a list for easy processing
-        if not isinstance(transactions, list):
-            transactions = [transactions]
-
-        # Prepare list to store the new transaction IDs
-        new_transaction_ids = []
-
-        for transaction in transactions:
-            transaction.userId = user_id
-            # convert to dictionary
-            transaction_dict = transaction.model_dump(by_alis=True)
-            result = await transactions_collection.insert_one(transaction_dict)
-            new_transaction_ids.append(str(result.inserted_id))
-
-        # Update the user's document with the new transaction IDs
-        await users_collection.update_one(
-            {"_id": user_id},
-            {"$push": {"transactions": {"$each": new_transaction_ids}}}
-        )
-
-        return {"message": f"{len(new_transaction_ids)} transaction(s) created successfully", "transaction_ids": new_transaction_ids}
-
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        print(f"Error creating transactions: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+# Include routers
+app.include_router(users.router)
+app.include_router(transactions.router)
 
 def start():
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
